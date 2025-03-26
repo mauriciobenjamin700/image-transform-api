@@ -1,8 +1,5 @@
-from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    async_sessionmaker,
-    AsyncSession
-)
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 from app.core.settings import config
@@ -10,9 +7,9 @@ from app.db.configs.base import Base
 from app.db.models import *
 
 
-class AsyncDatabaseManager:
+class DBConnectionHandler:
     """
-    A class to represent an async database manager. It is used to manage the database connection and session.
+    A class to represent an database manager. It is used to manage the database connection and session.
 
     - Methods:
         - connect: Connect to the database.
@@ -31,53 +28,54 @@ class AsyncDatabaseManager:
 
     def connect(self):
         if self.__engine is None and self.__session_maker is None:
-            self.__engine = create_async_engine(
+            self.__engine = create_engine(
                 self.db_url,
-                # future=True,
-                #echo=True,
+                pool_pre_ping=True,
                 echo=False
             )
-            self.__session_maker = async_sessionmaker(
+            self.__session_maker = sessionmaker(
                 self.__engine,
-                expire_on_commit=False,
-                class_=AsyncSession
+                expire_on_commit=False
             )
             self.__session = self.__session_maker()
 
 
-    async def disconnect(self):
+    def disconnect(self):
         if self.__engine is not None and self.__session_maker is not None:
-            await self.__engine.dispose()
+            self.__engine.dispose()
             self.__engine = None
             self.__session_maker = None
             self.__session = None
 
-    async def open_session(self):
+    def open_session(self):
         if self.__session is None:
             self.__session = self.__session_maker()
 
-    async def close_session(self):
+    def close_session(self):
         if self.__session is not None:
-            await self.__session.close()
+            self.__session.close()
             self.__session = None
 
-    async def create_tables(self):
-        async with self.__engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+    def create_tables(self):
+            Base.metadata.create_all(self.__engine)
 
-    async def drop_tables(self):
-        async with self.__engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
+    def drop_tables(self):
+            Base.metadata.drop_all(self.__engine)
 
 
-    async def __aenter__(self):
-        await self.open_session()
+    def __enter__(self):
+        self.open_session()
         return self.__session
 
-    async def __aexit__(self, exc_type, exc, tb):
-        #await self.close_session()
+    def __exit__(self, exc_type, exc, tb):
+        print(f"""
+        Exception Type: {exc_type}
+        Exception: {exc}
+        Traceback: {tb}
+        """)
+        #self.close_session()
         pass
 
 
-db=AsyncDatabaseManager(config.DB_URL)
+db=DBConnectionHandler(config.DB_URL)
 db.connect()

@@ -3,19 +3,20 @@ from pytest import fixture
 from app.core.constants.enums.user import UserRoles
 from app.core.security.password import hash_password
 from app.core.settings import config
-from app.db.configs.connection import AsyncDatabaseManager
+from app.db.configs.connection import DBConnectionHandler
 
 
 @fixture
-async def mock_db_session():
-    test_db = AsyncDatabaseManager(config.TEST_DB_URL)
+def mock_db_session():
+    test_db = DBConnectionHandler(config.TEST_DB_URL)
     test_db.connect()
-    await test_db.create_tables()
-    async with test_db as session:
+    test_db.create_tables()
+    
+    with test_db as session:
 
         yield session
 
-    await test_db.drop_tables()
+    test_db.drop_tables()
 
 
 

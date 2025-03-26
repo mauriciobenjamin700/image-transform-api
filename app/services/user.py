@@ -1,4 +1,4 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app.core.constants.enums.user import UserRoles
 from app.core.constants.messages import ERROR_DATABASE_USER_NOT_FOUND, ERROR_DATABASE_USERS_NOT_FOUND, MESSAGE_USER_DELETE_SUCCESS
@@ -32,11 +32,11 @@ class UserService:
       - map_model_to_response: Map a user model to a user response.
 
     """
-    def __init__(self, db_session: AsyncSession):
+    def __init__(self, db_session: Session):
         self.repository = UserRepository(db_session)
 
 
-    async def add(self, request: UserRequest) -> UserResponse:
+    def add(self, request: UserRequest) -> UserResponse:
         """
         A method to add a user to the database.
 
@@ -51,14 +51,14 @@ class UserService:
 
         model = self.map_request_to_model(request)
 
-        model = await self.repository.add(model)
+        model = self.repository.add(model)
 
         response = self.map_model_to_response(model)
 
         return response
 
 
-    async def get_by_id(self, user_id: str) -> UserResponse:
+    def get_by_id(self, user_id: str) -> UserResponse:
         """
         A method to get a user by id.
 
@@ -68,7 +68,7 @@ class UserService:
           - response: UserResponse : A user response object with the user data.
         """
 
-        model = await self.repository.get(id=user_id)
+        model = self.repository.get(id=user_id)
 
         if not model:
 
@@ -79,7 +79,7 @@ class UserService:
         return response
 
 
-    async def get_all(self) -> list[UserResponse]:
+    def get_all(self) -> list[UserResponse]:
         """
         Get all users from the database.
 
@@ -88,7 +88,7 @@ class UserService:
         - Returns:
             - response: List[UserResponse] : A list of user response objects.
         """
-        models = await self.repository.get(all_results=True)
+        models = self.repository.get(all_results=True)
 
         if not models or not isinstance(models, list):
 
@@ -98,9 +98,9 @@ class UserService:
 
         return response
 
-    async def update(self, id: str, request: UserRequest):
+    def update(self, id: str, request: UserRequest):
 
-        model = await self.repository.get(id=id)
+        model = self.repository.get(id=id)
 
         if not model:
 
@@ -112,13 +112,13 @@ class UserService:
             else:
                 setattr(model, key, value)
 
-        model = await self.repository.update(model)
+        model = self.repository.update(model)
 
         response = self.map_model_to_response(model)
 
         return response
 
-    async def delete_by_id(self, id: str) -> Message:
+    def delete_by_id(self, id: str) -> Message:
         """
         Delete a user from the database by id.
 
@@ -128,7 +128,7 @@ class UserService:
           - Message : A message object with the result of the operation.
         """
 
-        await self.repository.delete(id=id)
+        self.repository.delete(id=id)
 
         return Message(detail=MESSAGE_USER_DELETE_SUCCESS)
 

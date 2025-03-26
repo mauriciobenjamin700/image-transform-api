@@ -6,8 +6,7 @@ from app.schemas.user import UserRequest, UserResponse
 from app.services.user import UserService
 
 
-@pytest.mark.asyncio
-async def test_user_service_add_success(mock_db_session, mock_user_request):
+def test_user_service_add_success(mock_db_session, mock_user_request):
 
     # Arrange
 
@@ -16,7 +15,7 @@ async def test_user_service_add_success(mock_db_session, mock_user_request):
 
     # Act
 
-    response = await service.add(request)
+    response = service.add(request)
 
     # Assert
 
@@ -32,20 +31,19 @@ async def test_user_service_add_success(mock_db_session, mock_user_request):
     assert isinstance(response.updated_at, str)
 
 
-@pytest.mark.asyncio
-async def test_user_service_add_fail_already_exists(mock_db_session, mock_user_request):
+def test_user_service_add_fail_already_exists(mock_db_session, mock_user_request):
 
     # Arrange
 
     service = UserService(mock_db_session)
     request = UserRequest(**mock_user_request)
 
-    await service.add(request)
+    service.add(request)
 
     # Act
 
     with pytest.raises(ConflictError) as e:
-        await service.add(request)
+        service.add(request)
 
     # Assert
 

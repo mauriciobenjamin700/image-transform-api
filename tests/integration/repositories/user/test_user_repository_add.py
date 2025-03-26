@@ -1,10 +1,7 @@
-import pytest
-
 from app.db.models import UserModel
 from app.db.repositories.user import UserRepository
 
-@pytest.mark.asyncio
-async def test_user_repository_add_success(mock_db_session, mock_user_model):
+def test_user_repository_add_success(mock_db_session, mock_user_model):
 
     # Arrange
 
@@ -18,7 +15,7 @@ async def test_user_repository_add_success(mock_db_session, mock_user_model):
 
     # Act
 
-    on_db = await repo.add(model)
+    on_db = repo.add(model)
 
     # Assert
 

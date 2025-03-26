@@ -2,7 +2,7 @@ from sqlalchemy import (
     delete,
     select
 )
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from app.core.constants.messages import (
     ERROR_DATABASE_USER_ALREADY_EXISTS,
@@ -22,7 +22,7 @@ class UserRepository:
     User Repository Class to handle all database operations related to User
 
     - Attributes:
-        - db_session: AsyncSession
+        - db_session: Session
 
     - Methods:
         - add: Add a new User to the database
@@ -30,11 +30,11 @@ class UserRepository:
         - update: Update a User in the database
         - delete: Delete a User from the database
     """
-    def __init__(self, db_session: AsyncSession) -> None:
+    def __init__(self, db_session: Session) -> None:
         self.db_session = db_session
 
 
-    async def add(self, model: UserModel) -> UserModel:
+    def add(self, model: UserModel) -> UserModel:
         """
         Add a new User to the database
 
@@ -47,17 +47,17 @@ class UserRepository:
 
         try:
             self.db_session.add(model)
-            await self.db_session.commit()
-            await self.db_session.refresh(model)
+            self.db_session.commit()
+            self.db_session.refresh(model)
             return model
 
         except Exception as e:
             print("USER REPOSITORY ADD ERROR: ",e)
-            await self.db_session.rollback()
+            self.db_session.rollback()
             raise ConflictError(ERROR_DATABASE_USER_ALREADY_EXISTS)
 
 
-    async def get(self, id: str = None, email: str = None, all_results = False) -> None | UserModel | list[UserModel]:
+    def get(self, id: str = None, email: str = None, all_results = False) -> None | UserModel | list[UserModel]:
         """
         Get a User from the database by id or email. If all_results is True, return all results found in the database.
 
@@ -77,7 +77,7 @@ class UserRepository:
         else:
             stmt = select(UserModel)
 
-        result = await self.db_session.execute(stmt)
+        result = self.db_session.execute(stmt)
 
         if all_results:
             return result.scalars().all()
@@ -85,7 +85,7 @@ class UserRepository:
         return result.scalars().first()
 
 
-    async def update(self, model: UserModel) -> UserModel:
+    def update(self, model: UserModel) -> UserModel:
         """
         Update a User in the database
 
@@ -95,12 +95,12 @@ class UserRepository:
         - Returns:
             - UserModel
         """
-        await self.db_session.commit()
-        await self.db_session.refresh(model)
+        self.db_session.commit()
+        self.db_session.refresh(model)
         return model
 
 
-    async def delete(self, model: UserModel = None, id: str = None) -> None:
+    def delete(self, model: UserModel = None, id: str = None) -> None:
         """
         Delete a User from the database. If model is provided, delete the model. If id is provided, delete the model with the id.
 
@@ -112,12 +112,12 @@ class UserRepository:
             - None
         """
         if model:
-            await self.db_session.delete(model)
-            await self.db_session.commit()
+            self.db_session.delete(model)
+            self.db_session.commit()
         elif id:
             stmt = delete(UserModel).where(UserModel.id == id)
-            result = await self.db_session.execute(stmt)
-            await self.db_session.commit()
+            result = self.db_session.execute(stmt)
+            self.db_session.commit()
 
             if result.rowcount == 0:
                 raise NotFoundError(ERROR_DATABASE_USER_NOT_FOUND)

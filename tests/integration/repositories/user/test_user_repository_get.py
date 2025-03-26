@@ -3,8 +3,7 @@ import pytest
 from app.db.models import UserModel
 from app.db.repositories.user import UserRepository
 
-@pytest.mark.asyncio
-async def test_user_repository_get_by_id_success(mock_db_session, mock_user_model):
+def test_user_repository_get_by_id_success(mock_db_session, mock_user_model):
 
     # Arrange
 
@@ -16,11 +15,11 @@ async def test_user_repository_get_by_id_success(mock_db_session, mock_user_mode
 
     repo = UserRepository(db_session)
 
-    on_db = await repo.add(model)
+    on_db = repo.add(model)
 
     # Act
 
-    response = await repo.get(id=on_db.id)
+    response = repo.get(id=on_db.id)
 
 
     # Assert
@@ -35,7 +34,7 @@ async def test_user_repository_get_by_id_success(mock_db_session, mock_user_mode
     assert on_db.updated_at == response.updated_at
 
 
-async def test_user_repository_get_by_email_success(mock_db_session, mock_user_model):
+def test_user_repository_get_by_email_success(mock_db_session, mock_user_model):
 
     # Arrange
 
@@ -47,11 +46,11 @@ async def test_user_repository_get_by_email_success(mock_db_session, mock_user_m
 
     repo = UserRepository(db_session)
 
-    on_db = await repo.add(model)
+    on_db = repo.add(model)
 
     # Act
 
-    response = await repo.get(email=on_db.email)
+    response = repo.get(email=on_db.email)
 
 
     # Assert
@@ -66,7 +65,7 @@ async def test_user_repository_get_by_email_success(mock_db_session, mock_user_m
     assert on_db.updated_at == response.updated_at
 
 
-async def test_user_repository_get_all_success(mock_db_session, mock_user_model):
+def test_user_repository_get_all_success(mock_db_session, mock_user_model):
 
     # Arrange
 
@@ -78,11 +77,11 @@ async def test_user_repository_get_all_success(mock_db_session, mock_user_model)
 
     repo = UserRepository(db_session)
 
-    on_db = await repo.add(model)
+    on_db = repo.add(model)
 
     # Act
 
-    responses = await repo.get(all_results=True)
+    responses = repo.get(all_results=True)
 
 
     # Assert
@@ -98,7 +97,7 @@ async def test_user_repository_get_all_success(mock_db_session, mock_user_model)
     assert on_db.updated_at == response.updated_at
 
 
-async def test_user_repository_get_none_success(mock_db_session, mock_user_model):
+def test_user_repository_get_none_success(mock_db_session, mock_user_model):
 
     # Arrange
 
@@ -109,7 +108,7 @@ async def test_user_repository_get_none_success(mock_db_session, mock_user_model
 
     # Act
 
-    responses = await repo.get()
+    responses = repo.get()
 
 
     # Assert

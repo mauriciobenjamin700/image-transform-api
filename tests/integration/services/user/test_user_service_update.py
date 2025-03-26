@@ -7,14 +7,13 @@ from app.schemas.user import UserRequest, UserResponse
 from app.services.user import UserService
 
 
-@pytest.mark.asyncio
-async def test_user_service_update_success(mock_db_session, mock_user_request):
+def test_user_service_update_success(mock_db_session, mock_user_request):
 
     # Arrange
 
     service = UserService(mock_db_session)
     request = UserRequest(**mock_user_request)
-    response_db = await service.add(request)
+    response_db = service.add(request)
     update = UserRequest(**request.to_dict())
     update.name = "New Name"
     update.email = "new@email.com"
@@ -24,8 +23,8 @@ async def test_user_service_update_success(mock_db_session, mock_user_request):
 
     # Act
 
-    response = await service.update(response_db.id, update)
-    model = await service.repository.get(id=response_db.id)
+    response = service.update(response_db.id, update)
+    model = service.repository.get(id=response_db.id)
     # Assert
 
     assert isinstance(response, UserResponse)
@@ -35,20 +34,19 @@ async def test_user_service_update_success(mock_db_session, mock_user_request):
     assert verify_password(update.password, model.password)
 
 
-@pytest.mark.asyncio
-async def test_user_service_update_fail_not_found(mock_db_session, mock_user_request):
+def test_user_service_update_fail_not_found(mock_db_session, mock_user_request):
 
     # Arrange
 
     service = UserService(mock_db_session)
     request = UserRequest(**mock_user_request)
 
-    await service.add(request)
+    service.add(request)
 
     # Act
 
     with pytest.raises(NotFoundError) as e:
-        await service.update("123", request)
+        service.update("123", request)
 
     # Assert
 

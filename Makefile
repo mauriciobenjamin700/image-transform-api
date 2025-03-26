@@ -38,3 +38,8 @@ kabum:
 	@if [ -n "$$(docker ps -aq)" ]; then docker rm $$(docker ps -aq); fi
 	@if [ -n "$$(docker images -q)" ]; then docker rmi $$(docker images -q); fi
 	@if [ -n "$$(docker volume ls -q)" ]; then docker volume rm $$(docker volume ls -q); fi
+
+
+test-local:
+	docker build -t image-transform-api .
+	docker run -p 8000:8000 image-transform-api
