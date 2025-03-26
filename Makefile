@@ -1,6 +1,6 @@
 # Variáveis
-#DOCKER_COMPOSE_FILE=../docker-compose.yaml
-DOCKER_COMPOSE_FILE=docker-compose.yaml
+DOCKER_COMPOSE_FILE=../docker-compose.yaml
+#DOCKER_COMPOSE_FILE=docker-compose.yaml
 
 lint:
 	ruff check .

@@ -1,4 +1,3 @@
-import pytest
 
 from app.db.models import UserModel
 from app.db.repositories.user import UserRepository
