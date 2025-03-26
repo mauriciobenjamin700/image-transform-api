@@ -38,9 +38,12 @@ class ImageService:
         if filter_name not in ImageFilters.values():
             raise ValueError(f"Filter {filter_name} not found")
         
+        self.apply_filter(image_id, filter_name)
+        
         model = ImageModel(
             name=image_id,
-            url=join(config.UPLOAD_FOLDER, image_id),
+            origin_url=join("/image", config.UPLOAD_FOLDER, image_id),
+            filtered_url=join("/image", config.UPLOAD_FOLDER_FILTERED, image_id),
             filter_applied=filter_name
         )
         image = self.repository.add(model)

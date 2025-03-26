@@ -56,13 +56,15 @@ class ImageModel(Base):
 
     - Args:
         - name: str
-        - url: str
+        - origin_url: str
+        - filtered_url: str
         - filter_applied: str
-
+        
     - Attributes:
         - id: str PK,
         - name: str NOT NULL,
-        - url: str NOT NULL
+        - origin_url: str NOT NULL
+        - filtered_url: str
         - filter_applied: str NOT NULL
         - created_at: datetime NOT NULL DEFAULT now()
         - updated_at: datetime NOT NULL DEFAULT now() ON UPDATE now()
@@ -73,7 +75,8 @@ class ImageModel(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=id_generator)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    url: Mapped[str] = mapped_column(String, nullable=False)
+    origin_url: Mapped[str] = mapped_column(String, nullable=False)
+    filtered_url: Mapped[str] = mapped_column(String, nullable=True)
     filter_applied: Mapped[str] = mapped_column(Enum(ImageFilters), nullable=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now())
