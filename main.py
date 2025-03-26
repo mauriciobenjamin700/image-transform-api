@@ -1,5 +1,7 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flasgger import Swagger
+from werkzeug.exceptions import BadRequest, InternalServerError
+
 
 from app.api.endpoints.image import router as image_bp
 from app.api.endpoints.user import router as user_bp
@@ -17,6 +19,16 @@ app.config["UPLOAD_FOLDER"] = config.UPLOAD_FOLDER
 
 app.register_blueprint(image_bp)
 app.register_blueprint(user_bp)
+
+# Handlers de erro
+@app.errorhandler(BadRequest)
+def handle_bad_request(e):
+    return jsonify(error=str(e)), 400
+
+@app.errorhandler(InternalServerError)
+def handle_internal_server_error(e):
+    return jsonify(error=str(e)), 500
+
 
 @app.route('/', methods=['GET'])
 def index():

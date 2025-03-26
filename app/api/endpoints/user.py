@@ -59,11 +59,3 @@ def create_user():
             return jsonify(response.to_dict()), 200
         except Exception as e:
             raise InternalServerError(description=str(e))
-
-@router.errorhandler(BadRequest)
-def handle_bad_request(e):
-    return jsonify(error=str(e)), 400
-
-@router.errorhandler(InternalServerError)
-def handle_internal_server_error(e):
-    return jsonify(error=str(e)), 500

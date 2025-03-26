@@ -18,6 +18,11 @@ class Settings(BaseSettings):
         description="Pasta onde os arquivos serão salvos",
         default="uploads"
     )
+    UPLOAD_FOLDER_FILTERED: str = Field(
+        title="Pasta de uploads filtrados",
+        description="Pasta onde os arquivos filtrados serão salvos",
+        default="uploads/filtered"
+    )
     ALLOWED_EXTENSIONS: set = Field(
         title="Extensões permitidas",
         description="Extensões permitidas para upload",
