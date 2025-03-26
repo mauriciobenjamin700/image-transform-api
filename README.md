@@ -81,3 +81,7 @@ Ex:
 git rm -r --cached api/app/images/*.png
 git rm -r --cached api/app/images/*.jpg
 ```
+
+## Documentação das rotas
+
+Acesse [aqui](http://localhost:8000/apidocs/) durante o desenvolvimento para testar.
