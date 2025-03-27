@@ -10,6 +10,7 @@ venv
 
 *.db
 
+*.jpeg
 *.jpg
 *.png
 *.gif

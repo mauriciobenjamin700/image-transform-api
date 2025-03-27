@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flasgger import Swagger
+from flask_cors import CORS
 from werkzeug.exceptions import BadRequest, InternalServerError
 
 
@@ -12,6 +13,14 @@ db.connect()
 db.create_tables()
 
 app = Flask(__name__)
+
+CORS(
+  app, 
+  origins=["*"], 
+  methods=['*'],
+  allow_headers=["*"],
+)  # Permite requisições do frontend
+
 
 swagger = Swagger(app)
 
