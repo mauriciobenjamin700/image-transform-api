@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from flasgger import Swagger
 from flask_cors import CORS
+from os.path import exists
 from werkzeug.exceptions import BadRequest, InternalServerError
 
 
@@ -9,16 +10,20 @@ from app.api.endpoints.user import router as user_bp
 from app.core.settings import config
 from app.db.configs.connection import db
 
+if not exists("image-transform-db"):
+    with open("image-transform-db", "w") as f:
+        pass
+
 db.connect()
 db.create_tables()
 
 app = Flask(__name__)
 
 CORS(
-  app, 
-  origins=["*"], 
-  methods=['*'],
-  allow_headers=["*"],
+    app, 
+    origins=["*"], 
+    methods=['*'],
+    allow_headers=["*"],
 )  # Permite requisições do frontend
 
 
